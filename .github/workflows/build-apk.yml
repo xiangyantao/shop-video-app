@@ -2,8 +2,8 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ main ]  # 推送到main分支时自动打包
+  workflow_dispatch:    # 支持手动触发打包
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y openjdk-17-jdk git zip unzip libffi-dev libssl-dev
-        pip install --user buildozer
+        pip install --user buildozer cython  # 新增 cython 依赖
 
     - name: Build APK
       run: |
@@ -32,4 +32,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: shop-video-apk
-        path: bin/*.apk
+        path: bin/*.apk  # 打包好的APK会上传到这里
