@@ -15,8 +15,9 @@ android.ndk = 25b
 android.archs = arm64-v8a armeabi-v7a
 android.permissions = CAMERA RECORD_AUDIO READ_EXTERNAL_STORAGE WRITE_EXTERNAL_STORAGE
 
-requirements = python3,kivy,zbar,pyzbar,jnius
+requirements = python3,kivy==2.1.0,cython,pyzbar,jnius
 
 [buildozer]
 log_level = 2
+
 warn_on_root = 1
