@@ -1,35 +1,36 @@
-name: Build Android APK
+name: Build Android APK (Buildozer)
 
 on:
-  push:
-    branches: [ main ]  # 推送到main分支时自动打包
-  workflow_dispatch:    # 支持手动触发打包
+  workflow_dispatch:
+
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-dev build-essential git \
+              libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev \
+              libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
+              pkg-config libgl1-mesa-dev libgles2-mesa-dev \
+              android-sdk-platform-tools android-sdk-build-tools
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y openjdk-17-jdk git zip unzip libffi-dev libssl-dev
-        pip install --user buildozer cython  # 新增 cython 依赖
+      - name: Install Buildozer
+        run: pip3 install buildozer==1.5.0
 
-    - name: Build APK
-      run: |
-        export PATH="$HOME/.local/bin:$PATH"
-        buildozer -v android debug
+      - name: Build APK with Buildozer
+        run: buildozer android debug
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: shop-video-apk
-        path: bin/*.apk  # 打包好的APK会上传到这里
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildozer-apk
+          path: ./bin/*.apk
+        if: success()
